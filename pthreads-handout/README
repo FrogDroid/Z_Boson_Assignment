@@ -1,0 +1,21 @@
+This is the handout directory for the CS3100 threads program
+
+************************
+Compile your code:
+    linux> make
+
+Check the correctness of your simulator:
+    linux> ./multithread
+
+******
+Files:
+******
+# You will modifying and handing in this file
+multiThread.c       Your multithread code
+
+# Tools for evaluating your code 
+Makefile		Builds the multithread  and tools
+README       	This file
+mythreads.c   	Required helper functions
+mythreads.h   	Required header file
+test-multiThread 		Tests your cache simulator
