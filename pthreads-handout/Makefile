@@ -1,9 +1,9 @@
 # Student makefile for Cache Lab
 # Change the USER/TEAM to your First_Last 
-USER = Waldo_Weber
+USER = Z_BOSON 
 VERSION = 1
 # Change your icarus server user, ex: hv12345 
-ICAUSER =  NOBODY
+ICAUSER = js11224 
 DEST = "$(ICAUSER)@icarus.cs.weber.edu:/home/hvalle/submit/cs3100/"
 #
 # Student makefile for Threads

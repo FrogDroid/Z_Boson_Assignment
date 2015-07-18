@@ -12,14 +12,41 @@ void printUsage(char* argv[]);
 // Global Variables
 int circle_count = 0;		/* the number of hits in the circle */
 int verbosity = 0; 			/* print trace if set */
+int threadCount = 0;	//number of threads to run
+int dartCount = 0;	//the number of darts to run.
 // Main program
 int main (int argc, char * argv[]) 
 {
 	double estimated_pi = 0;
 	/* Get Options */
-    printUsage(argv);
 
     /* Make sure that all required command line args were specified */
+	int hasDarts = 0;
+        int  hasThreads = 0;
+        int c = 0;
+         while ((c = getopt(argc, argv, "v:d:t:")) != -1)
+        {
+                switch (c)
+                {
+                        case 'v':
+                                verbosity = 1;
+                                break;
+                        case 'd':
+                                dartCount  = atoi(optarg);
+                                hasDarts = 1;
+                                break;
+                        case 't':
+                                threadCount   = atoi(optarg);
+                                hasThreads = 1;
+                                break;
+                        default:
+                                printUsage(argv);
+                }
+        }
+
+        if(!(hasDarts && hasThreads)){
+                printUsage(argv);
+        }
 
 	/* Allocate memory for array of workers */
 
