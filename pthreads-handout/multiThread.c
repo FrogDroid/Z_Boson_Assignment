@@ -8,7 +8,8 @@
 // Prototypes
 void printUsage(char* argv[]);
 // .. others 
-void throwDarts(pthread_mutex_t * lock);
+void * throwDarts(void * lock);
+double RandomDouble();
 
 // Global Variables
 int circle_count = 0;		/* the number of hits in the circle */
@@ -16,6 +17,7 @@ int verbosity = 0; 			/* print trace if set */
 int threadCount = 0;	//number of threads to run
 int dartCount = 0;	//the number of darts to run.
 int dartsThrown = 0; //the counter for how many darts have been thrown
+pthread_mutex_t * lock; 
 // Main program
 int main (int argc, char * argv[]) 
 {
@@ -54,7 +56,6 @@ int main (int argc, char * argv[])
 	pthread_t ** workers = malloc(sizeof(pthread_t) * threadCount); 
 
 	/*  Initialze mutex lock */
-	pthread_mutex_t * lock = malloc(sizeof(pthread_mutex_t));
 	Pthread_mutex_init(lock, NULL); 
 
 	/* seed the random number generator */
@@ -63,13 +64,13 @@ int main (int argc, char * argv[])
 	/* Create threads */
 	for(int w = 0; w < threadCount; w++)
 	{
-		Pthread_create(workers[w], NULL, throwDarts, &lock);	
+		Pthread_create(workers[w], NULL, throwDarts, lock );	
 	}	
 	
 	/* Join threads */
 	for(int j = 0; j < threadCount; j++)
 	{
-		Pthread_join(workers[j], NULL);
+		Pthread_join((pthread_t) workers[j], NULL);
 	}
 
 	/* Parent estimates Pi */
@@ -79,7 +80,7 @@ int main (int argc, char * argv[])
 	return 0;
 }
 
-void throwDart(pthread_mutex_t * lock)
+void * throwDarts(void * lock)
 {
 	double x,y,c;
 	//generate the random point
@@ -104,6 +105,7 @@ void throwDart(pthread_mutex_t * lock)
 		//!UNLOCK
 		Pthread_mutex_unlock(lock);
 	}
+	return NULL;
 }
 
 /*
@@ -123,3 +125,7 @@ void printUsage(char* argv[])
     exit(0);
 }
 
+double RandomDouble() 
+{
+	return rand() / ((double)RAND_MAX + 1);
+}
