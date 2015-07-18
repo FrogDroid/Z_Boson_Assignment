@@ -9,7 +9,7 @@ DEST = "$(ICAUSER)@icarus.cs.weber.edu:/home/hvalle/submit/cs3100/"
 # Student makefile for Threads
 # 
 CC = gcc
-CFLAGS = -Wall -Werror -std=c99 
+CFLAGS = -Wall -std=c99 
 # Compiler Flags:
 # 		-g			-- Enables debugig
 # 		-Wall		-- Turns on all the warnings

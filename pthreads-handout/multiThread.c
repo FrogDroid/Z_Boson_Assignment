@@ -8,12 +8,14 @@
 // Prototypes
 void printUsage(char* argv[]);
 // .. others 
+void throwDarts(pthread_mutex_t * lock);
 
 // Global Variables
 int circle_count = 0;		/* the number of hits in the circle */
 int verbosity = 0; 			/* print trace if set */
 int threadCount = 0;	//number of threads to run
 int dartCount = 0;	//the number of darts to run.
+int dartsThrown = 0; //the counter for how many darts have been thrown
 // Main program
 int main (int argc, char * argv[]) 
 {
@@ -49,22 +51,59 @@ int main (int argc, char * argv[])
         }
 
 	/* Allocate memory for array of workers */
+	pthread_t ** workers = malloc(sizeof(pthread_t) * threadCount); 
 
 	/*  Initialze mutex lock */
+	pthread_mutex_t * lock = malloc(sizeof(pthread_mutex_t));
+	Pthread_mutex_init(lock, NULL); 
 
 	/* seed the random number generator */
 	srand((unsigned)time(NULL));
 	
 	/* Create threads */
-	
+	for(int w = 0; w < threadCount; w++)
+	{
+		Pthread_create(workers[w], NULL, throwDarts, &lock);	
+	}	
 	
 	/* Join threads */
+	for(int j = 0; j < threadCount; j++)
+	{
+		Pthread_join(workers[j], NULL);
+	}
 
 	/* Parent estimates Pi */
 
 	printf("Pi = %f\n",estimated_pi);
 
 	return 0;
+}
+
+void throwDart(pthread_mutex_t * lock)
+{
+	double x,y,c;
+	//generate the random point
+	while(dartsThrown < dartCount){
+	
+		x = RandomDouble() * 2.0 - 1.0;
+		y = RandomDouble() * 2.0 - 1.0;
+		c = sqrt(x*x + y*y);
+		// if the point was within the circle,
+		if(c < 1.0){
+			//!LOCK
+			Pthread_mutex_lock(lock);
+			// increment the hits counter
+			circle_count++;
+			//!UNLOCK
+			Pthread_mutex_unlock(lock);
+		}
+		//!LOCK
+		Pthread_mutex_lock(lock);
+		// increment the darts thrown counter
+		dartsThrown++;
+		//!UNLOCK
+		Pthread_mutex_unlock(lock);
+	}
 }
 
 /*
