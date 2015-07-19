@@ -10,14 +10,14 @@ void printUsage(char* argv[]);
 // .. others 
 void * throwDarts(void * lock);
 double RandomDouble();
+double estimatePi();
 
 // Global Variables
 int circle_count = 0;		/* the number of hits in the circle */
-int verbosity = 0; 			/* print trace if set */
+int isVerbose = 0; 			/* print trace if set */
 int threadCount = 0;	//number of threads to run
 int dartCount = 0;	//the number of darts to run.
 int dartsThrown = 0; //the counter for how many darts have been thrown
-pthread_mutex_t * lock; 
 // Main program
 int main (int argc, char * argv[]) 
 {
@@ -28,24 +28,32 @@ int main (int argc, char * argv[])
 	int hasDarts = 0;
         int  hasThreads = 0;
         int c = 0;
-         while ((c = getopt(argc, argv, "v:d:t:")) != -1)
+         while (optind < argc)
         {
-                switch (c)
-                {
-                        case 'v':
-                                verbosity = 1;
+         	if ((c = getopt(argc, argv, "d:t:v")) != -1)
+		{
+                	switch (c)
+               		{
+                        	case 'v':
+                                isVerbose = 1;
                                 break;
-                        case 'd':
+                        	case 'd':
                                 dartCount  = atoi(optarg);
                                 hasDarts = 1;
                                 break;
-                        case 't':
+                        	case 't':
                                 threadCount   = atoi(optarg);
                                 hasThreads = 1;
                                 break;
-                        default:
+                        	default:
                                 printUsage(argv);
-                }
+                	}
+		}
+		else
+		{
+			//move along.
+			optind++;
+		}
         }
 
         if(!(hasDarts && hasThreads)){
@@ -53,9 +61,10 @@ int main (int argc, char * argv[])
         }
 
 	/* Allocate memory for array of workers */
-	pthread_t ** workers = malloc(sizeof(pthread_t) * threadCount); 
+	pthread_t * workers = malloc(sizeof(pthread_t) * threadCount); 
 
 	/*  Initialze mutex lock */
+	pthread_mutex_t * lock = malloc(sizeof(pthread_mutex_t));
 	Pthread_mutex_init(lock, NULL); 
 
 	/* seed the random number generator */
@@ -64,7 +73,10 @@ int main (int argc, char * argv[])
 	/* Create threads */
 	for(int w = 0; w < threadCount; w++)
 	{
-		Pthread_create(workers[w], NULL, throwDarts, lock );	
+		if(isVerbose){
+			printf("creating thread %d \n", w);
+		}
+		Pthread_create(&workers[w], NULL, throwDarts, lock );	
 	}	
 	
 	/* Join threads */
@@ -73,7 +85,14 @@ int main (int argc, char * argv[])
 		Pthread_join((pthread_t) workers[j], NULL);
 	}
 
+	if(isVerbose){
+
+		printf("All threads complete.\n");
+		printf("Total darts Thrown: %d \n", dartsThrown);
+		printf("Total hits: %d \n", circle_count);
+	}
 	/* Parent estimates Pi */
+	estimated_pi = estimatePi();
 
 	printf("Pi = %f\n",estimated_pi);
 
@@ -113,7 +132,7 @@ void * throwDarts(void * lock)
  */
 void printUsage(char* argv[])
 {
-    printf("Usage: %s [-hv] -v <num> -t <num>\n", argv[0]);
+    printf("Usage: %s [-hv] -d <num> -t <num>\n", argv[0]);
     printf("Options:\n");
     printf("  -h         Print this help message.\n");
     printf("  -v         Optional verbose flag.\n");
@@ -128,4 +147,11 @@ void printUsage(char* argv[])
 double RandomDouble() 
 {
 	return rand() / ((double)RAND_MAX + 1);
+}
+
+double estimatePi()
+{
+	double pi = 0.0;
+	pi = (4.0 * (double) circle_count) / (double) dartsThrown;
+	return pi;
 }

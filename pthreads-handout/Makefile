@@ -9,7 +9,7 @@ DEST = "$(ICAUSER)@icarus.cs.weber.edu:/home/hvalle/submit/cs3100/"
 # Student makefile for Threads
 # 
 CC = gcc
-CFLAGS = -std=c99 -Wall -Werror -Wno-pointer-to-int-cast 
+CFLAGS = -std=c99 -g -Wall -Werror -Wno-pointer-to-int-cast 
 # Compiler Flags:
 # 		-g			-- Enables debugig
 # 		-Wall		-- Turns on all the warnings
