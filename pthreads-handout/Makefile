@@ -1,6 +1,6 @@
 # Student makefile for Cache Lab
 # Change the USER/TEAM to your First_Last 
-USER = Z_BOSON 
+USER = Z_BOSON
 VERSION = 1
 # Change your icarus server user, ex: hv12345 
 ICAUSER = js11224 

@@ -1,3 +1,7 @@
+/**
+* Group: Z_BOSON
+* MEMBERS: Jeremiah Sommerfled, Brian Lisonbee (Did no work)
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
